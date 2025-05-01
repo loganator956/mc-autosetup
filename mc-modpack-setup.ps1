@@ -40,7 +40,7 @@ function Install-ModrinthVersion {
             Write-Host "Installing modrinth dependency" $Dependency
         
             if ($Dependency.version_id -eq $null) {
-                Write-Warning -Message ($Dependency.project_id + " has no version_id set. Finding...")
+                Write-Warning -Message ($Dependency.project_id + "(" + $Dependency.title + ") has no version_id set. Finding...")
                 Find-ModrinthVersion -ProjectID $Dependency.project_id -AllowedLoaders $AllowedLoaders -AllowedGameVersions $AllowedGameVersions -Blacklist $Blacklist
                 continue
             }
