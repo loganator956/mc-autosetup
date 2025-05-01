@@ -254,7 +254,7 @@ Disable-Mods -ModDir "$DestinationStorage\mods"
 
 foreach ($source in $SourceList.Mods) {
     if ($source.Source -eq "modrinth") {
-        if ($source.VersionID -eq $null) {
+        if ($null -eq $source.VersionID) {
             Find-ModrinthVersion -ProjectID $source.ProjectID -Blacklist $SourceList.ModBlacklist -AllowedGameVersions $SourceList[0].AllowedGameVersions -AllowedLoaders $SourceList[0].AllowedModLoaders
         }
         else {
