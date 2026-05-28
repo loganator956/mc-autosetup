@@ -157,8 +157,7 @@ function Install-ModLoader {
 
 function Install-Java {
     if ((Test-Path -Path $JavaPath) -eq $false) {
-        winget.exe install --exact --id EclipseAdoptium.Temurin.20.JRE --version 20.0.1.9
-        winget.exe install --exact --id EclipseADoptium.Temurin.21.JRE --version 21.0.2.13
+        winget.exe install --exact --id EclipseAdoptium.Temurin.25.JRE --version 25.0.3.9
     }
 }
 
@@ -244,7 +243,8 @@ if ((Test-Path -Path "$DestinationStorage\mods") -eq $false) {
 if ((Test-Path -Path "$DestinationStorage\shaderpacks") -eq $false) {
     New-Item -Path "$DestinationStorage\shaderpacks" -ItemType Directory
 }
-$JavaPath = "C:\Program Files\Eclipse Adoptium\jre-20.0.1.9-hotspot\bin\java.exe"
+
+$JavaPath = "C:\Program Files\Eclipse Adoptium\jre-25.0.3.9-hotspot\bin\java.exe"
 
 $InstalledModrinthProjectsList = New-Object Collections.Generic.List[string]
 
