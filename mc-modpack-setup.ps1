@@ -32,7 +32,16 @@ function Install-ModrinthVersion {
     if ((Test-Path -Path "$DestinationStorage\mods") -eq $false) {
         New-Item -Path "$DestinationStorage\mods" -ItemType Directory
     }
+    if ((Test-Path -Path "$DestinationStorage\.servermods") -eq $false) {
+        New-Item -Path "$DestinationStorage\.servermods" -ItemType Directory
+    }
     Invoke-WebRequest -Uri $content.files[0].url -OutFile "$DestinationStorage\mods\$fileName"
+    if ($project.server_side -eq "required" -or $project.server_side -eq "optional"){
+        Copy-Item -Path "$DestinationStorage\mods\$fileName" -Destination "$DestinationStorage\.servermods\$fileName"
+    }
+    if ($content.server_side -eq "unknown"){
+        Write-Error -Message "$content."
+    }
 
     # Process Dependencies
     foreach ($Dependency in $content.dependencies) {
@@ -40,7 +49,7 @@ function Install-ModrinthVersion {
             Write-Host "Installing modrinth dependency" $Dependency
         
             if ($Dependency.version_id -eq $null) {
-                Write-Warning -Message ($Dependency.project_id + " has no version_id set. Finding...")
+                Write-Warning -Message ($Dependency.project_id + ") has no version_id set. Finding...")
                 Find-ModrinthVersion -ProjectID $Dependency.project_id -AllowedLoaders $AllowedLoaders -AllowedGameVersions $AllowedGameVersions -Blacklist $Blacklist
                 continue
             }
@@ -240,6 +249,9 @@ if ((Test-Path -Path $DestinationStorage) -eq $false) {
 if ((Test-Path -Path "$DestinationStorage\mods") -eq $false) {
     New-Item -Path "$DestinationStorage\mods" -ItemType Directory
 }
+if ((Test-Path -Path "$DestinationStorage\.servermods") -eq $false) {
+    New-Item -Path "$DestinationStorage\.servermods" -ItemType Directory
+}
 if ((Test-Path -Path "$DestinationStorage\shaderpacks") -eq $false) {
     New-Item -Path "$DestinationStorage\shaderpacks" -ItemType Directory
 }
@@ -251,10 +263,11 @@ $InstalledModrinthProjectsList = New-Object Collections.Generic.List[string]
 Install-ModLoader -URL $SourceList.ModLoader $SourceList.ModLoaderInstallArgs
 
 Disable-Mods -ModDir "$DestinationStorage\mods"
+Disable-Mods -ModDir "$DestinationStorage\.servermods"
 
 foreach ($source in $SourceList.Mods) {
     if ($source.Source -eq "modrinth") {
-        if ($source.VersionID -eq $null) {
+        if ($null -eq $source.VersionID) {
             Find-ModrinthVersion -ProjectID $source.ProjectID -Blacklist $SourceList.ModBlacklist -AllowedGameVersions $SourceList[0].AllowedGameVersions -AllowedLoaders $SourceList[0].AllowedModLoaders
         }
         else {
